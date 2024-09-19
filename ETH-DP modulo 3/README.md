@@ -39,17 +39,18 @@ Cada equipo debe elegir un contrato y discutir cómo desarrollarlo. El objetivo 
 
 ## Sobre implementación
 
-1. Se requirió implementar un _token_ personalizado para poder probar el contrato de _Staking_ en modo virtualizado o simulado dado que se pide verificación de uso de un _token_ con cumplimiento de ERC20 o IERC20.
+1. Se escogió implementar un contrato de `Staking` de `ERC20`, por las recomendaciones y sugerencias se usó librería `IERC20`, _token inmutable_
+2. Se requirió implementar un _token_ personalizado para poder probar el contrato de _Staking_ en modo virtualizado o simulado dado que se pide verificación de uso de un _token_ con conformidad de `ERC20` o `IERC20`.
 
-2. Se probaron con éxitos las implementaciones virtualizadas o simuladas del contrato de _Staking_ y el contrato del _Token_
+3. Se probaron con éxitos las implementaciones virtualizadas o simuladas del contrato de _Staking_ y el contrato del _Token_ en Remix VM (Cancun).
 
 ## Explicación de contrato
 
 1. Contrato de _staking_ de _tokens_ `IERC20`. Este contrato premia a usuarios que ceden una cantidad de _tokens_ al contrato, el rendimiento lo calcula como cantidad de _tokens_ cedidos por segundos transcurridos por `rewardRate`/1000 (esto para hacer el contrato más realista). 
-2. Creación de contrato solicita uso de _token_ conforme con `IERC20` y tasa de recompensa `rewardRate`, que se estima como `rewardRate`/1000 _token_ por segundo por _token_ cedido.
+2. Creación de contrato solicita uso de _token_ conforme con `IERC20` y tasa de recompensa `rewardRate`, que se considera como `rewardRate`/1000 _token_ por segundo por _token_ cedido.
 3. Para mayor control el contrato lleva contabilidad separada de monto cedido, `amount`, y recompensa de _staking_, `rewardEarned`.
 4. Se tiene operación `stake` para transferir _tokens_ de usuario al contrato de _staking_.
-5. Se tiene operación `withdraw` para retirar _tokens_ cedidos de vuelta al dueño.
+5. Se tiene operación `withdraw` para retirar _tokens_ cedidos de vuelta al dueño, este solicita monto a retirar como entrada.
 5. Se tiene operación `claimRewards` para retirar todos los _tokens_ recompensados (el rendimiento o premio actual).
 6. Se tiene operación privada `_updateRewards` para actualizar recompensa de rendimiento cada vez que se hace una operación que implica transferencia. Antes de hacer cualquier transferencia (`stake`,`withdraw`, `claimRewards`) se actualizan los _tokens_ de `rewardEarned`.
 7. Se tiene operación `getStake` para obtener posición actual de usuario en el contrato (devuelve el monto actual cedido y las recompensas calculadas las última vez que se hizo transferencia)
