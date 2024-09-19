@@ -31,9 +31,10 @@ Cada equipo debe elegir un contrato y discutir cómo desarrollarlo. El objetivo 
 
 1. Suban el código del contrato a un repositorio de GitHub.
 2. El repositorio debe incluir un README con la siguiente información:
-    a. Descripción del contrato: Explicación del contrato desarrollado, incluyendo la funcionalidad principal.
-    b. Razonamiento detrás del diseño: Breve explicación de las decisiones técnicas y de diseño tomadas durante el desarrollo, haciendo énfasis en el uso de patrones de diseño en Solidity donde sea necesario.
-    c. Integrantes del equipo: Incluyan los perfiles de GitHub de los miembros del equipo.
+
+    1. Descripción del contrato: Explicación del contrato desarrollado, incluyendo la funcionalidad principal.
+    2. Razonamiento detrás del diseño: Breve explicación de las decisiones técnicas y de diseño tomadas durante el desarrollo, haciendo énfasis en el uso de patrones de diseño en Solidity donde sea necesario.
+    3. Integrantes del equipo: Incluyan los perfiles de GitHub de los miembros del equipo.
 
 # 2. Resultados de implementación
 
