@@ -8,19 +8,32 @@
 2. Wilmer Ramírez
 3. ¿Jose...?
 
-# Detalles
+# Detalles de asignación
 
-## Requisitos
+## Desarrollo de un Contrato Inteligente en Equipos de 3 Personas
 
-1. Contrato de Staking de token utilizando solidity y estándares de Open-Zepellin
-2. Explicaciones de decisiones tomadas
+## Objetivo: Desarrollar un contrato inteligente basado en uno de los siguientes casos de uso:
 
-## Salidas 
+1. Marketplace de NFTs
+2. Staking de Token ERC-20
 
-1. Repositorio `GitHub` con contratos y README con explicación de decisiones
-2. Contrato inteligente de _Staking_, enlace de etherscan, sin verificación por complicaciones de librerías en Remix IDE
-3. Contrato inteligente de _token_, enlace de etherscan, sin verificación por complicaciones de librerías en Remix IDE
-4. Billetera de emisor
+Cada equipo debe elegir un contrato y discutir cómo desarrollarlo. El objetivo es presentar una solución funcional que cubra los aspectos clave del contrato, utilizar patrones de diseño en Solidity cuando sea necesario, y demostrar el despliegue en una red de prueba.
+
+## Requerimientos de Entrega:
+
+### Contrato Inteligente Desplegado:
+
+1. Desplieguen el contrato en una red de prueba (por ejemplo, Sepolia).
+2. No es necesario verificar el contrato.
+3. Se debe proporcionar el enlace de Etherscan al contrato desplegado.
+
+### Repositorio de GitHub:
+
+1. Suban el código del contrato a un repositorio de GitHub.
+2. El repositorio debe incluir un README con la siguiente información:
+3. Descripción del contrato: Explicación del contrato desarrollado, incluyendo la funcionalidad principal.
+4. Razonamiento detrás del diseño: Breve explicación de las decisiones técnicas y de diseño tomadas durante el desarrollo, haciendo énfasis en el uso de patrones de diseño en Solidity donde sea necesario.
+5. Integrantes del equipo: Incluyan los perfiles de GitHub de los miembros del equipo.
 
 # Resultados de implementación
 
@@ -30,7 +43,18 @@
 
 2. Se probaron con éxitos las implementaciones virtualizadas o simuladas del contrato de _Staking_ y el contrato del _Token_
 
-## Decisiones tomadas en contrato de _Staking_
+## Explicación de contrato
+
+1. Contrato de _staking_ de _tokens_ `IERC20`. Este contrato premia a usuarios que ceden una cantidad de _tokens_ al contrato, el rendimiento lo calcula como cantidad de _tokens_ cedidos por segundos transcurridos por `rewardRate`/1000 (esto para hacer el contrato más realista). 
+2. Creación de contrato solicita uso de _token_ conforme con `IERC20` y tasa de recompensa `rewardRate`, que se estima como `rewardRate`/1000 _token_ por segundo por _token_ cedido.
+3. Para mayor control el contrato lleva contabilidad separada de monto cedido, `amount`, y recompensa de _staking_, `rewardEarned`.
+4. Se tiene operación `stake` para transferir _tokens_ de usuario al contrato de _staking_.
+5. Se tiene operación `withdraw` para retirar _tokens_ cedidos de vuelta al dueño.
+5. Se tiene operación `claimRewards` para retirar todos los _tokens_ recompensados (el rendimiento o premio actual).
+6. Se tiene operación privada `_updateRewards` para actualizar recompensa de rendimiento cada vez que se hace una operación que implica transferencia. Antes de hacer cualquier transferencia (`stake`,`withdraw`, `claimRewards`) se actualizan los _tokens_ de `rewardEarned`.
+7. Se tiene operación `getStake` para obtener posición actual de usuario en el contrato (devuelve el monto actual cedido y las recompensas calculadas las última vez que se hizo transferencia)
+
+## Decisiones tomadas en diseño de contrato de _Staking_
 
 ### Librerias
 1. Uso  de librería `IERC20` de _Open-Zepellin_, para heredar requisitos, objetos y métodos del contrato estándar  `IERC20`, _tokens_ inmutables como criptomonedas, y lograr conformidad con estándar. 
@@ -39,11 +63,11 @@
 4. Uso infructuoso de librería `safeERC20` dado que está limitado a versión de compilador 0.8.0, se decidió no usar para aplicar compilador más reciente. 
 
 ### Decisiones en código
-1. Implementación de modificación `nonReentrant` para proteger los métodos de transferencia de _tokens_ de ataques de reentradas.
+1. Implementación de modificador `nonReentrant` para proteger los métodos de transferencia de _tokens_ de ataques de reentradas.
 2. Implementación de método `_updateRewards` como `private` para evitar llamadas por cualquier agente externo y limitarlas a que se hagan dentro del contrato.
 3. Implementación de un estado `bool` llamado `success` y un `require` de ese booleano para hacer las transferencias más seguras. Si no se logra éxito en la transferencia no se actualizan los registros del contrato de _Staking_.
-4. Intento sin éxito de operaciones `safeTransfer` y `safeTransferFrom` de librería `safeERC20` por antigüedad y no compatibilidad con el compilador.
-5. Implementación en código de `_updateRewards` del objeto `block.number` en lugar de `block.timestamp` para aumentar la seguridad en el cálculo de rendimiento o recompensa por realizar _staking_. 
-6. Modificación de `_updateRewards` a una división por 1000 para hacer realista el cálculo de rendimientos o recompensa. Los métodos usuales de mínimo `rewardRate` de 1, 1 _token_ por segundo por cada _token_ cedido, hacen que  el saldo de rendimiento rápidamente alcance y supere por varios órdenes de magnitud el monto de _tokens_ cedido al contrato de _Staking_.
+4. Intento sin éxito de utilizar métodos `safeTransfer` y `safeTransferFrom` de librería `safeERC20` por antigüedad y no compatibilidad con el compilador.
+5. Implementación en `_updateRewards` del objeto `block.number` en lugar de `block.timestamp` para aumentar la seguridad en el cálculo de rendimiento o recompensa por realizar _staking_. 
+6. Modificación de `_updateRewards` a usar la fracción `rewardRate`/1000  en lugar de sólo `rewardRate` para hacer realista el cálculo de recompensa. Los métodos usuales de un mínimo `rewardRate` de 1, que se interpreta como 1 _token_ por segundo por cada _token_ cedido, hacen que  el saldo de rendimiento rápidamente alcance y supere por varios órdenes de magnitud el monto de _tokens_ cedido al contrato de _Staking_.
 7. Implementaciones separadas de montos para mayor claridad, transparencia y control; el monto cedido se registra como `amount` y los rendimientos ganados se registran como `rewardEarned` 
-8. Implementaciones separadas de retiros de montos para mayor claridad, transparencia y control; el monto cedido se retira con método `withdraw` y los rendimientos ganados se retiran con `claimRewards` 
+8. Implementaciones separadas de retiros de montos para mayor claridad, transparencia y control; el monto cedido se retira con método `withdraw` (exige especificar monto específico) y los rendimientos ganados se retiran con `claimRewards` (retira toda la recompensa sin preguntar por monto). 
