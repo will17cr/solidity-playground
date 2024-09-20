@@ -1,1 +1,2 @@
-Check each folder to check specific codes and specific README files
+En cada carpeta se encuentran los códigos específicos y README pertinentes
+Check each folder for specific codes and relevant README files. 
