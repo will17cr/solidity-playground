@@ -4,8 +4,10 @@ pragma solidity ^0.8.27;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract StakingContractRev is Ownable, ReentrancyGuard {
+contract StakingContractRev is Ownable, ReentrancyGuard, Pausable {
+
     IERC20 public stakingToken;
     uint256 public rewardRate; // Reward tokens per staked token per second
 
@@ -26,7 +28,7 @@ contract StakingContractRev is Ownable, ReentrancyGuard {
         rewardRate = _rewardRate;
     }
 
-    function stake(uint256 amount) public payable nonReentrant { // protect from re-entrant
+    function stake(uint256 amount) public payable whenNotPaused nonReentrant { // protect from re-entrant
         require(amount > 0, "Cannot stake 0 tokens");
         require(amount <= stakingToken.balanceOf(msg.sender), "Insufficient balance");
 
@@ -45,7 +47,7 @@ contract StakingContractRev is Ownable, ReentrancyGuard {
         emit Staked(msg.sender, amount);
     }
 
-    function withdraw(uint256 amount) external payable nonReentrant { // protect from re-entrant
+    function withdraw(uint256 amount) external payable whenNotPaused nonReentrant { // protect from re-entrant
         Stake storage stakeData = stakes[msg.sender];
         require(stakeData.amount >= amount, "Insufficient balance to withdraw");
 
@@ -62,7 +64,7 @@ contract StakingContractRev is Ownable, ReentrancyGuard {
         emit Withdrawn(msg.sender, amount);
     }
 
-    function claimRewards() external payable nonReentrant { // protect from re-entrant
+    function claimRewards() external payable whenNotPaused nonReentrant { // protect from re-entrant
         _updateRewards(msg.sender);
         
         Stake storage stakeData = stakes[msg.sender];
@@ -95,5 +97,13 @@ contract StakingContractRev is Ownable, ReentrancyGuard {
     function getStake() external view returns (uint256 amount, uint256 rewardsEarned) {
         Stake storage stakeData = stakes[msg.sender];
         return (stakeData.amount, stakeData.rewardsEarned);
+    }
+    
+    function pause() public onlyOwner { // safeguard function to pause contract in case of worries
+    _pause();
+    }
+    
+    function unpause() public onlyOwner { // safeguard function to unpause contract
+    _unpause();
     }
 }
