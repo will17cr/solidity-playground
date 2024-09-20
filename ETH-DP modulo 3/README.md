@@ -56,7 +56,7 @@ Cada equipo debe elegir un contrato y discutir cómo desarrollarlo. El objetivo 
 6. Se tiene función privada **`_updateRewards()`** para actualizar recompensa de rendimiento, actualiza los _tokens_ de **`rewardEarned`** y el tiempo de conteo **`timestamp`**. Esta función está implementada dentro de las operaciones que implican transferencia. Antes de hacer cualquier transferencia dentro de `stake()`,`withdraw()` y `claimRewards()` primero se calcula recompensa y luego se ejecuta transferencia.
 7. Se tiene operación **`getStake()`** para obtener posición actual de usuario en el contrato (devuelve el monto actual cedido y las recompensas calculadas las última vez que se hizo transferencia).
 8. La mayoría de operaciones tienen registro de evento para facilitar trazabilidad.
-9. También existe el registro stakes donde se puede visualizar cuantos _tokens_ están cedidos (**`stake`**), cuántos tokens lleva de recompensa (**`rewardsEarned`**) y cuántos segundos han transcurrido desde última actualización de recompensa (**`timestamp`**). 
+9. También existe el registro **`stakes`** donde se puede visualizar cuantos _tokens_ están cedidos (**`stake`**), cuántos tokens lleva de recompensa (**`rewardsEarned`**) y cuántos segundos han transcurrido desde última actualización de recompensa (**`timestamp`**). 
 
 ## 2.3. Decisiones tomadas en diseño de contrato de _Staking_
 
