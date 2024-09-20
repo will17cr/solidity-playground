@@ -59,17 +59,27 @@ Cada equipo debe elegir un contrato y discutir cómo desarrollarlo. El objetivo 
 ## 2.3. Decisiones tomadas en diseño de contrato de _Staking_
 
 ### 2.3.1. Librerias
-1. Uso  de librería `IERC20` de _Open-Zepellin_, para heredar requisitos, objetos y métodos del contrato estándar  `IERC20`, _tokens_ inmutables como criptomonedas, y lograr conformidad con estándar. 
-2. Uso  de librería `Ownable` de _Open-Zepellin_, para heredar requisitos, objetos y métodos del contrato estándar  `Ownable`, contratos que permiten propiedad por otros,  y lograr acceso a funciones y métodos de conformidad con estándar. 
-3. Uso  de librería `ReentrancyGuard` de _Open-Zepellin_, para heredar requisitos, objetos y métodos del contrato estándar  `ReentrancyGuard`, mecanismos de protección contra re-entrada de registros, y lograr acceso a funciones y métodos de conformidad con estándar.
-4. Uso infructuoso de librería `safeERC20` dado que está limitado a versión de compilador 0.8.0, se decidió no usar para aplicar compilador más reciente. 
+
+1. Uso  de librería `IERC20` de _Open-Zepellin_, para heredar requisitos, objetos y funciones del contrato estándar  `IERC20`, _tokens_ inmutables como criptomonedas, y lograr conformidad con estándar. 
+2. Uso  de librería `Ownable` de _Open-Zepellin_, para heredar requisitos, objetos y funciones del contrato estándar  `Ownable`, contratos que permiten propiedad por otros,  y lograr acceso a objetos y funciones de conformidad con estándar. 
+3. Uso  de librería `ReentrancyGuard` de _Open-Zepellin_, para heredar requisitos, objetos y funciones del contrato estándar  `ReentrancyGuard`, mecanismos de protección contra re-entrada de registros, y lograr acceso a funciones y funciones de conformidad con estándar.
+4. Uso  de librería `Pausable` de _Open-Zepellin_, para heredar requisitos, objetos y funciones del contrato estándar  `Pausable`, mecanismos de protección de pausa y rehabilitación del contrato, y lograr acceso a funciones y funciones de conformidad con estándar.
+5. Uso infructuoso de librería `safeERC20` dado que está limitado a versión de compilador 0.8.0, se decidió no usar para aplicar compilador más reciente. 
 
 ### 2.3.2. Decisiones en código
-1. Implementación de modificador `nonReentrant` para proteger los métodos de transferencia de _tokens_ de ataques de reentradas.
-2. Implementación de método `_updateRewards` como `private` para evitar llamadas por cualquier agente externo y limitarlas a que se hagan dentro del contrato.
-3. Implementación de un estado `bool` llamado `success` y un `require` de ese booleano para hacer las transferencias más seguras. Si no se logra éxito en la transferencia no se actualizan los registros del contrato de _Staking_.
-4. Intento sin éxito de utilizar métodos `safeTransfer` y `safeTransferFrom` de librería `safeERC20` por antigüedad y no compatibilidad con el compilador.
-5. Implementación en `_updateRewards` del objeto `block.number` en lugar de `block.timestamp` para aumentar la seguridad en el cálculo de rendimiento o recompensa por realizar _staking_. 
-6. Modificación de `_updateRewards` a usar la fracción `rewardRate`/1000  en lugar de sólo `rewardRate` para hacer realista el cálculo de recompensa. Los métodos usuales de un mínimo `rewardRate` de 1, que se interpreta como 1 _token_ por segundo por cada _token_ cedido, hacen que  el saldo de rendimiento rápidamente alcance y supere por varios órdenes de magnitud el monto de _tokens_ cedido al contrato de _Staking_.
-7. Implementaciones separadas de montos para mayor claridad, transparencia y control; el monto cedido se registra como `amount` y los rendimientos ganados se registran como `rewardEarned` 
-8. Implementaciones separadas de retiros de montos para mayor claridad, transparencia y control; el monto cedido se retira con método `withdraw` (exige especificar monto específico) y los rendimientos ganados se retiran con `claimRewards` (retira toda la recompensa sin preguntar por monto). 
+
+1. Uso de modificador `nonReentrant` de librería  `ReentrancyGuard` para proteger los funciones de transferencia de _tokens_ de ataques de reentradas.
+2. Implementación de funciones `pause()` y `unpause()` como solicita la librería  `Pausable`, permitidas únicamente al dueño del contrato mediante modificador `onlyOwner`, el dueño pausa y despausa el contrato a su discreción como mecanismo de protección.
+3. Uso de modificador `whenNotPaused` de librería  `Pausable` para deshabilitar funciones críticas de transferencias del contrato cuando se activa `pause()`, funciona como mecanismo de emergencia de protección contra actividades sospechosas. En este caso solo deshabilita la ejecución de funciones `stake()`, `withdraw()` y `claimRewards()`.
+4. Implementación de función `_updateRewards()` como `private` para evitar llamadas por cualquier agente externo y limitarlas a que se hagan dentro del contrato.
+5. Implementación de un estado `bool` llamado `success` y un `require` de ese booleano para hacer las transferencias más seguras. Si no se logra éxito en la transferencia no se actualizan los registros del contrato de _Staking_.
+6. Intento sin éxito de utilizar funciones `safeTransfer()` y `safeTransferFrom()` de librería `safeERC20` por antigüedad y no compatibilidad con el compilador.
+7. Implementación en `_updateRewards()` del objeto `block.number` en lugar de `block.timestamp` para aumentar la seguridad en el cálculo de rendimiento o recompensa por realizar _staking_. 
+8. Modificación de `_updateRewards()` a usar la fracción `rewardRate`/1000  en lugar de sólo `rewardRate` para hacer realista el cálculo de recompensa. Los funciones usuales de un mínimo `rewardRate` de 1, que se interpreta como 1 _token_ por segundo por cada _token_ cedido, hacen que  el saldo de rendimiento rápidamente alcance y supere por varios órdenes de magnitud el monto de _tokens_ cedido al contrato de _Staking_.
+9. Implementaciones separadas de montos para mayor claridad, transparencia y control; el monto cedido se registra como `amount` y los rendimientos ganados se registran como `rewardEarned` 
+10. Implementaciones separadas de retiros de montos para mayor claridad, transparencia y control; el monto cedido se retira con función `withdraw()` (exige especificar monto específico) y los rendimientos ganados se retiran con `claimRewards()` (retira toda la recompensa sin preguntar por monto).
+
+## 2.4 Opciones de mejora futuras
+
+1. Se puede modificar la función `claimRewards()` para permitir retirar un monto parcial y no toda la recompensa.
+2. Se puede implementar pausa automática del contrato mediante la verificación de una o varias condiciones en el contrato, por ejemplo cantidad de retiros sucesivos en una ventana dada de tiempo, contador de ciertos tipos de error, contador de algún registro de `nonReentrant`, balance mínimo de `stakes`, otras condiciones.
