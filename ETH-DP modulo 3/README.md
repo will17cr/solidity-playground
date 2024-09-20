@@ -62,10 +62,10 @@ Cada equipo debe elegir un contrato y discutir cómo desarrollarlo. El objetivo 
 
 ### 2.3.1. Librerias
 
-1. Uso  de librería **`IERC20`** de _Open-Zepellin_, para heredar requisitos, objetos y funciones del contrato estándar  **`IERC20`**, _tokens_ inmutables como criptomonedas, y lograr conformidad con estándar. 
-2. Uso  de librería **`Ownable`** de _Open-Zepellin_, para heredar requisitos, objetos y funciones del contrato estándar  **`Ownable`**, contratos que permiten propiedad por otros,  y lograr acceso a objetos y funciones de conformidad con estándar. 
-3. Uso  de librería **`ReentrancyGuard`** de _Open-Zepellin_, para heredar requisitos, objetos y funciones del contrato estándar  **`ReentrancyGuard`**, mecanismos de protección contra re-entrada de registros, y lograr acceso a funciones y funciones de conformidad con estándar.
-4. Uso  de librería **`Pausable`** de _Open-Zepellin_, para heredar requisitos, objetos y funciones del contrato estándar  **`Pausable`**, mecanismos de protección de pausa y rehabilitación del contrato, y lograr acceso a funciones y funciones de conformidad con estándar.
+1. Uso  de librería **`IERC20`** de _Open-Zepellin_, para heredar requisitos, variables, modificadores y funciones del contrato estándar  **`IERC20`**, _tokens_ inmutables como criptomonedas, y lograr conformidad con estándar. 
+2. Uso  de librería **`Ownable`** de _Open-Zepellin_, para heredar requisitos, variables, modificadores y funciones del contrato estándar  **`Ownable`**, contratos que permiten propiedad por otros,  y lograr conformidad con estándar. 
+3. Uso  de librería **`ReentrancyGuard`** de _Open-Zepellin_, para heredar requisitos, variables, modificadores y funciones del contrato estándar  **`ReentrancyGuard`**, mecanismos de protección contra re-entrada de registros, y lograr conformidad con estándar.
+4. Uso  de librería **`Pausable`** de _Open-Zepellin_, para heredar requisitos, variables, modificadores y funciones del contrato estándar  **`Pausable`**, mecanismos de protección de pausa y rehabilitación del contrato, y lograr conformidad con estándar.
 5. Uso infructuoso de librería **`safeERC20`** dado que está limitado a versión de compilador 0.8.0, se decidió no usar para aplicar compilador más reciente. 
 
 ### 2.3.2. Decisiones en código
