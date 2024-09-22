@@ -6,7 +6,7 @@
 
 1. Randall Brenes
 2. Wilmer Ramírez
-3. ¿Jose...?
+3. Jose Cerdas
 
 # 1. Detalles de asignación
 
